@@ -26,8 +26,10 @@ public class EchoClient {
 
     public void start()
         throws Exception {
+        //NIO group
         EventLoopGroup group = new NioEventLoopGroup();
         try {
+            //client导引
             Bootstrap b = new Bootstrap();
             b.group(group)
                 .channel(NioSocketChannel.class)

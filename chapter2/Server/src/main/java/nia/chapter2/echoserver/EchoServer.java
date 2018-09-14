@@ -12,7 +12,6 @@ import java.net.InetSocketAddress;
 
 /**
  * Listing 2.2 EchoServer class
- *
  * @author <a href="mailto:norman.maurer@gmail.com">Norman Maurer</a>
  */
 public class EchoServer {
@@ -23,15 +22,15 @@ public class EchoServer {
     }
 
     public static void main(String[] args)
-        throws Exception {
+            throws Exception {
         if (args.length != 1) {
             System.err.println("Usage: " + EchoServer.class.getSimpleName() +
-                " <port>"
+                    " <port>"
             );
             return;
         }
         int port = Integer.parseInt(args[0]);
-        new EchoServer(port).start();
+        new EchoServer(port).start(); //调用start
     }
 
     public void start() throws Exception {
@@ -40,18 +39,21 @@ public class EchoServer {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(group)
-                .channel(NioServerSocketChannel.class)
-                .localAddress(new InetSocketAddress(port))
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(serverHandler);
-                    }
-                });
-
+                    //指定所使用的Nio传输channel
+                    .channel(NioServerSocketChannel.class)
+                    .localAddress(new InetSocketAddress(port))  //设置socket port
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            //添加echo ServerHandler到 子channel的 ChannelPipeline
+                            ch.pipeline().addLast(serverHandler);
+                        }
+                    });
+            //异步的绑定服务器，调用sync方法 block到bind ok
             ChannelFuture f = b.bind().sync();
             System.out.println(EchoServer.class.getName() +
-                " started and listening for connections on " + f.channel().localAddress());
+                    " started and listening for connections on " + f.channel().localAddress());
+            //获取channel的closeFuture，block到当前显示线程直到它完成
             f.channel().closeFuture().sync();
         } finally {
             group.shutdownGracefully().sync();

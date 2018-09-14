@@ -20,14 +20,14 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
         ByteBuf in = (ByteBuf) msg;
         System.out.println(
                 "Server received: " + in.toString(CharsetUtil.UTF_8));
-        ctx.write(in);
+        ctx.write(in);  //把接收到的消息写给发送者，不flush出站消息
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx)
             throws Exception {
         ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
-                .addListener(ChannelFutureListener.CLOSE);
+                .addListener(ChannelFutureListener.CLOSE); //将未决消息冲刷到client，并关闭channel
     }
 
     @Override

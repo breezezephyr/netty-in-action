@@ -30,6 +30,7 @@ public class ConnectExample {
         // Does not block
         ChannelFuture future = channel.connect(
                 new InetSocketAddress("192.168.0.1", 25));
+        //可以注册多个Listener
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) {
